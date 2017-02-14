@@ -22,6 +22,14 @@ import numpy
 import pylab
 import argparse
 
+# Connect to devices
+ITC = MercuryITC('COM3') # PI USB-to-serial connection COM3
+t = ITC.modules[0] # module 0 is temperature board
+#h = ITC.modules[1] # module 1 is heater power board
+
+PSU = TenmaPSU('COM4') # USK-K-R-COM USB-to-serial connection COM4, must be connected via USB hub
+#print(PSU.GetIdentity()) # Prints PSU device identity string to terminal
+
 
 def get_args():
     parser = argparse.ArgumentParser(description='Do some measurements.')
@@ -41,8 +49,8 @@ def set_temp(temp):
     # temperature reading(float) as element 0 and unit(string) as element 1
     print('Temperature set to {} {}'.format(reading[0], reading[1]))  # print to screen
 
-    sleep(60 * 15)
     print('Waiting 15 mins... started at {}'.format(str(datetime.now())))
+    sleep(60 * 15)
 
 
 def set_psu():
@@ -68,22 +76,26 @@ def iterate_temp(npts, temp, tstep, savename):
     # loop to take repeated readings
     for p in range(npts):
         set_temp(temp)
-
-        T[p] = t.temp[0]
+        
         # t.temp returns a tuple containing the latest temperature reading (float)
         # as element 0 and unit(string) as element 1
-        V[p] = Vdmm.reading # *dmm.reading returns latest reading from *dmm (float, in Volt or Ampere units)
-        I[p] = Idmm.reading
+        v_temp = []
+        i_temp = []
+        t_temp = []
+        for i in range(3):
+            t_temp.append(t.temp[0])
+            v_temp.append(Vdmm.reading) # *dmm.reading returns latest reading from *dmm (float, in Volt or Ampere units)
+            i_temp.append(Idmm.reading)#
+            
+            sleep(5)
+        
+        T[p] = numpy.mean(t_temp)
+        V[p] = numpy.mean(v_temp)
+        I[p] = numpy.mean(i_temp)
+        
+        
         R[p] = V[p] / I[p] # calculate resistance - note the __future__ division import...
         print(p, T[p], V[p], I[p]) # print to screen
-
-        # plot a graph
-        pylab.figure()
-        pylab.plot(T, '-k', marker='x')
-        pylab.plot(V, '-b', marker='x')
-        pylab.plot(I, '-r', marker='x')
-        pylab.plot(R, '-r', marker='o')
-        pylab.show()
 
         temp += tstep
 
@@ -93,15 +105,7 @@ def iterate_temp(npts, temp, tstep, savename):
 
 if __name__ == "__main__":
     args = get_args()
-
-    # Connect to devices
-    ITC = MercuryITC('COM3')  # PI USB-to-serial connection COM3
-    t = ITC.modules[0]  # module 0 is temperature board
-    # h = ITC.modules[1] # module 1 is heater power board
-
-    PSU = TenmaPSU('COM4')  # USK-K-R-COM USB-to-serial connection COM4, must be connected via USB hub
-    # print(PSU.GetIdentity()) # Prints PSU device identity string to terminal
-
+    
     # National Instruments GPIB-USB-HS GPIB interface
     Vdmm = K2000(16, 0)  # GPIB adaptor gpib0, device address 16
     Vdmm.write(":SENS:FUNC 'VOLT:DC'")  # configure to dc voltage
