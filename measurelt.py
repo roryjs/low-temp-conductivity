@@ -21,21 +21,13 @@ import numpy
 import pylab
 import argparse
 
-# Connect to devices
-ITC = MercuryITC('COM3') # PI USB-to-serial connection COM3
-t = ITC.modules[0] # module 0 is temperature board
-#h = ITC.modules[1] # module 1 is heater power board
-
-PSU = TenmaPSU('COM4') # USK-K-R-COM USB-to-serial connection COM4, must be connected via USB hub
-#print(PSU.GetIdentity()) # Prints PSU device identity string to terminal
-
 
 def get_args():
     parser = argparse.ArgumentParser(description='Do some measurements.')
     parser.add_argument('-n', '--npts', type=int, required=True, default=10, help='')
     parser.add_argument('-s', '--savename', type=str, required=True, default='output.txt',  help='')
     parser.add_argument('-t', '--temp', type=int, required=True, default=77, help='Init temp')
-    parser.add_argument('-u', '--tempstep', type=int, required=True, default=5, help='Temp step')
+    parser.add_argument('-u', '--tstep', type=int, required=True, default=5, help='Temp step')
 
     return parser.parse_args()
 
@@ -52,12 +44,6 @@ def set_temp(temp):
 
 
 def set_psu():
-    # National Instruments GPIB-USB-HS GPIB interface
-    Vdmm = K2000(16, 0)  # GPIB adaptor gpib0, device address 16
-    Vdmm.write(":SENS:FUNC 'VOLT:DC'")  # configure to dc voltage
-    Idmm = K2000(26, 0)  # GPIB adaptor gpib0, device address 26
-    Idmm.write(":SENS:FUNC 'CURR:DC'")  # configure to dc current
-
     PSU.SetCurrent = 0.01 #A
     # write the PSU current setpoint (float, in Ampere units)
     print('PSU current output set to {} A'.format(PSU.SetCurrent))
@@ -105,6 +91,20 @@ def iterate_temp(npts, temp, tstep, savename):
 
 if __name__ == "__main__":
     args = get_args()
+
+    # Connect to devices
+    ITC = MercuryITC('COM3')  # PI USB-to-serial connection COM3
+    t = ITC.modules[0]  # module 0 is temperature board
+    # h = ITC.modules[1] # module 1 is heater power board
+
+    PSU = TenmaPSU('COM4')  # USK-K-R-COM USB-to-serial connection COM4, must be connected via USB hub
+    # print(PSU.GetIdentity()) # Prints PSU device identity string to terminal
+
+    # National Instruments GPIB-USB-HS GPIB interface
+    Vdmm = K2000(16, 0)  # GPIB adaptor gpib0, device address 16
+    Vdmm.write(":SENS:FUNC 'VOLT:DC'")  # configure to dc voltage
+    Idmm = K2000(26, 0)  # GPIB adaptor gpib0, device address 26
+    Idmm.write(":SENS:FUNC 'CURR:DC'")  # configure to dc current
 
     set_psu()
 
