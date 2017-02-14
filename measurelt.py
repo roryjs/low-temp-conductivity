@@ -15,6 +15,7 @@ Controls:
 from __future__ import print_function, division
 from level2labs.lowtemperature import K2000, MercuryITC, TenmaPSU
 from time import sleep
+from datetime import datetime
 
 import sys
 import numpy
@@ -41,6 +42,7 @@ def set_temp(temp):
     print('Temperature set to {} {}'.format(reading[0], reading[1]))  # print to screen
 
     sleep(60 * 15)
+    print('Waiting 15 mins... started at {}'.format(str(datetime.now())))
 
 
 def set_psu():
