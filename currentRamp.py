@@ -86,6 +86,8 @@ def iterate_current(npts, current, I_step, savename, wait):
     V = numpy.zeros(npts * wait)
     I = numpy.zeros(npts * wait)
     ti = numpy.zeros(npts * wait)
+    ti_I = numpy.zeros(npts * wait)
+    currents = numpy.zeros(npts * wait)
 
     init_time = time()
     
@@ -93,6 +95,8 @@ def iterate_current(npts, current, I_step, savename, wait):
 
     # loop to take repeated readings
     for p in range(npts):
+        ti_I[p] = time() - init_time
+        currents[p] = current + p*I_step
         PSU.SetCurrent = current + p*I_step
         print('PSU voltage output set to {} A'.format(PSU.SetCurrent))
 
@@ -106,22 +110,22 @@ def iterate_current(npts, current, I_step, savename, wait):
 
             sleep(1)
 
+    ti_I[npts] = time() - init_time  #finish time
+
     if not (savename == None):
-        numpy.savetxt(savename, (T, V, I, ti))  # save data to file
-    
+        numpy.savetxt(savename, (T, V, I, ti, ti_I, currents))  # save data to file
+
     s = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-    s.login(email, password)
+    s.login(passwords.email, passwords.password)
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = 'subject'
-    
-    array = (T, V, I, ti)
-    attachment = MIMEText(str(array), 'plain')
-    attachment.add_header('Content-Disposition', 'attachment', filename='output.txt')
+    msg['Subject'] = savename
+
+    f = file(savename)
+    attachment = MIMEText(f.read())
+    attachment.add_header('Content-Disposition', 'attachment', filename=savename)
     msg.attach(attachment)
-    with open(savename) as f:
-        data = f.readlines()
-    s.sendmail(email, emails, data)
-    
+    s.sendmail(passwords.email, passwords.emails, msg.as_string())
+
     s.quit()
 
 
