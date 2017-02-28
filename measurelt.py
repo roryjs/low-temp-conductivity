@@ -111,7 +111,7 @@ def iterate_temp(npts, temp, tstep, savename, wait):
 
         temp += tstep
 
-    ti_temp[npts + 1] = time() - init_time  #finish time
+    ti_temp[npts] = time() - init_time  #finish time
 
     if not (savename == None):
         numpy.savetxt(savename, (T, V, I, ti, ti_temp, temps))  # save data to file
