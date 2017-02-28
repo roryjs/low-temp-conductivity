@@ -58,7 +58,6 @@ def wait_to_cool(temp):
 
     print('Waiting 15 mins... started at {}'.format(str(datetime.now())))
     
-    sleep(15*60)
 
 
 def set_temp(temp):
@@ -88,8 +87,8 @@ def iterate_temp(npts, temp, tstep, savename, wait):
     V = numpy.zeros(npts * wait)
     I = numpy.zeros(npts * wait)
     ti = numpy.zeros(npts * wait)
-    ti_temp = numpy.zeros(npts + 1)
-    temps = numpy.zeros(npts)
+    ti_temp = numpy.zeros(npts * wait)
+    temps = numpy.zeros(npts * wait)
 
     init_time = time()
 
@@ -117,18 +116,15 @@ def iterate_temp(npts, temp, tstep, savename, wait):
         numpy.savetxt(savename, (T, V, I, ti, ti_temp, temps))  # save data to file
     
     s = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-    s.login(email, password)
+    s.login(passwords.email, passwords.password)
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = 'subject'
+    msg['Subject'] = savename
 
-    array = (T, V, I, ti)
-
-    attachment = MIMEText(str(array), 'plain')
-    attachment.add_header('Content-Disposition', 'attachment', filename='output.txt')
+    f = file(savename)
+    attachment = MIMEText(f.read())
+    attachment.add_header('Content-Disposition', 'attachment', filename=savename)
     msg.attach(attachment)
-    with open(savename) as f:
-        data = f.readlines()
-    s.sendmail(email, emails, data)
+    s.sendmail(passwords.email, passwords.emails, msg.as_string())
     
     s.quit()
 
