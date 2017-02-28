@@ -56,9 +56,9 @@ def wait_to_cool(temp):
     while t.temp[0] - 1 > reading[0]:
         sleep(10)
 
-    print('Waiting 5 mins... started at {}'.format(str(datetime.now())))
+    print('Waiting 15 mins... started at {}'.format(str(datetime.now())))
     
-    sleep(5*60)
+    sleep(15*60)
 
 
 def set_temp(temp):
