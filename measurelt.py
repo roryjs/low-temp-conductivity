@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Oct 28 13:10:15 2016
-
 @author: Aidan Hindmarch
-
 Example script to run low temperature conductivity experiment.
-
 Controls: 
     Keithley 2000 series DMM
     Oxford Instruments Mercury iTC temperature controller
     Tenma 72-2550 PSU
-
 """
 from __future__ import print_function, division
 from level2labs.lowtemperature import K2000, MercuryITC, TenmaPSU
@@ -21,6 +17,11 @@ import sys
 import numpy
 import pylab
 import argparse
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import passwords
+
 
 # Connect to devices
 ITC = MercuryITC('COM3')  # PI USB-to-serial connection COM3
@@ -52,12 +53,12 @@ def wait_to_cool(temp):
     # temperature reading(float) as element 0 and unit(string) as element 1
     print('Temperature set to {} {}'.format(reading[0], reading[1]))  # print to screen
 
-    while t.temp[0] > t.tset + 1:
+    while t.temp[0] - 1 > reading[0]:
         sleep(10)
 
-    sleep(60 * 10)
-
-    print('Waiting 10 mins... started at {}'.format(str(datetime.now())))
+    print('Waiting 5 mins... started at {}'.format(str(datetime.now())))
+    
+    sleep(5*60)
 
 
 def set_temp(temp):
@@ -108,6 +109,22 @@ def iterate_temp(npts, temp, tstep, savename, wait):
 
     if not (savename == None):
         numpy.savetxt(savename, (T, V, I, ti))  # save data to file
+    
+    s = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    s.login(email, password)
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = 'subject'
+
+    array = (T, V, I, ti)
+
+    attachment = MIMEText(str(array), 'plain')
+    attachment.add_header('Content-Disposition', 'attachment', filename='output.txt')
+    msg.attach(attachment)
+    with open(savename) as f:
+        data = f.readlines()
+    s.sendmail(email, emails, data)
+    
+    s.quit()
 
 
 if __name__ == "__main__":
@@ -129,3 +146,4 @@ if __name__ == "__main__":
     # Disconnect from instruments
     PSU.close()
     ITC.close()
+    
