@@ -88,11 +88,15 @@ def iterate_temp(npts, temp, tstep, savename, wait):
     V = numpy.zeros(npts * wait)
     I = numpy.zeros(npts * wait)
     ti = numpy.zeros(npts * wait)
+    ti_temp = numpy.zeros(npts + 1)
+    temps = numpy.zeros(npts)
 
     init_time = time()
 
     # loop to take repeated readings
     for p in range(npts):
+        ti_temp[p] = time() - init_time
+        temps[p] = temp
         set_temp(temp)
 
         for l in range(wait):
@@ -107,8 +111,10 @@ def iterate_temp(npts, temp, tstep, savename, wait):
 
         temp += tstep
 
+    ti_temp[npts + 1] = time() - init_time  #finish time
+
     if not (savename == None):
-        numpy.savetxt(savename, (T, V, I, ti))  # save data to file
+        numpy.savetxt(savename, (T, V, I, ti, ti_temp, temps))  # save data to file
     
     s = smtplib.SMTP_SSL('smtp.gmail.com', 465)
     s.login(email, password)
