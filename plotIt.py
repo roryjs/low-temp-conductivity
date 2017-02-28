@@ -12,13 +12,3 @@ pyplot.plot(T, V/I)
 #pylab.plot(ti, I)
 
 pyplot.show()
-
-
-# new code to write txt
-
-numpy.savetxt('output3.txt', (T, V, I, ti))
-
-with open('output3.txt') as f:
-    data = f.readlines()
-
-print data
