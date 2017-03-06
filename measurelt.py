@@ -107,7 +107,7 @@ def iterate_temp(npts, temp, tstep, savename, wait):
             I[p * wait + l] = Idmm.reading
             ti[p * wait + l] = time() - init_time
 
-            sleep(1)
+            sleep(0.561)
 
         temp += tstep
 
