@@ -29,7 +29,7 @@ t = ITC.modules[0]  # module 0 is temperature board
 # h = ITC.modules[1] # module 1 is heater power board
 
 PSU = TenmaPSU('COM4')  # USK-K-R-COM USB-to-serial connection COM4, must be connected via USB hub
-PSU._Ilimit = 1.5
+PSU._Ilimit = 3
 
 # print(PSU.GetIdentity()) # Prints PSU device identity string to terminal
 
