@@ -37,15 +37,15 @@ for i in ramp_index2:
     av_voltages2.append(numpy.abs(numpy.average(V2[i-10:i])))
     av_currents2.append(numpy.average(I2[i-10:i]))
 print av_voltages2'''
-#(T, V, I, ti, ti_temp, temps) = numpy.loadtxt('semi-80to140-5step.txt')
-#i_temp = numpy.trim_zeros(ti_temp, 'b')
-#temps = numpy.trim_zeros(temps, 'b')
+(T, V, I, ti, ti_I, currents) = numpy.loadtxt('semi-80to140-5step.txt')
+ti_I = numpy.trim_zeros(ti_I, 'b')
+currents = numpy.trim_zeros(currents, 'b')
 #print temps
 #print ti_temp
 
-(T, V, I, ti, ti_T, temps) = numpy.loadtxt('t-ramp-80-180.txt')
+'''(T, V, I, ti, ti_T, temps) = numpy.loadtxt('t-ramp-80-180.txt')
 ti_T = numpy.trim_zeros(ti_T)
-temps = numpy.trim_zeros(temps)
+temps = numpy.trim_zeros(temps)'''
 
 pyplot.figure()
 #pyplot.plot(av_voltages, av_currents)
@@ -53,6 +53,6 @@ pyplot.figure()
 #pyplot.plot(I, V)
 #pyplot.plot(ti, V/I)
 #pylab.plot(ti, V)
-pyplot.plot(T, I)
+pyplot.plot(ti, V)
 
 pyplot.show()

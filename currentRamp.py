@@ -61,7 +61,7 @@ def wait_to_cool(temp):
 
     print('Waiting 5 mins... started at {}'.format(str(datetime.now())))
     
-    #sleep(5*60)
+    sleep(1*60)
 
 
 def set_temp(temp):
