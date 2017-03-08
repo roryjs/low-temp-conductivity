@@ -37,7 +37,7 @@ for i in ramp_index2:
     av_voltages2.append(numpy.abs(numpy.average(V2[i-10:i])))
     av_currents2.append(numpy.average(I2[i-10:i]))
 print av_voltages2'''
-(T, V, I, ti, ti_I, currents) = numpy.loadtxt('super-i-ramp-0.1-1.1.txt')
+(T, V, I, ti, ti_I, currents) = numpy.loadtxt('super-i-ramp-2.6-2.8.py')
 ti_I = numpy.trim_zeros(ti_I, 'b')
 currents = numpy.trim_zeros(currents, 'b')
 
@@ -68,6 +68,6 @@ pyplot.figure()
 #pyplot.plot(I, V)
 #pyplot.plot(ti, V/I)
 #pylab.plot(ti, V)
-pyplot.plot(ti, V)
+pyplot.plot(ti, I)
 
 pyplot.show()

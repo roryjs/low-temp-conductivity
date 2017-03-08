@@ -115,19 +115,6 @@ def iterate_temp(npts, temp, tstep, savename, wait):
 
     if not (savename == None):
         numpy.savetxt(savename, (T, V, I, ti, ti_temp, temps))  # save data to file
-    
-    s = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-    s.login(passwords.email, passwords.password)
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = savename
-
-    f = file(savename)
-    attachment = MIMEText(f.read())
-    attachment.add_header('Content-Disposition', 'attachment', filename=savename)
-    msg.attach(attachment)
-    s.sendmail(passwords.email, passwords.emails, msg.as_string())
-    
-    s.quit()
 
 
 if __name__ == "__main__":

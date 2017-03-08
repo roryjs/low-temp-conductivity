@@ -98,7 +98,7 @@ def iterate_current(npts, current, I_step, savename, wait):
         ti_I[p] = time() - init_time
         currents[p] = current + p*I_step
         PSU.SetCurrent = current + p*I_step
-        print('PSU voltage output set to {} A'.format(PSU.SetCurrent))
+        print('PSU current output set to {} A'.format(PSU.SetCurrent))
 
         for l in range(wait):
             T[p * wait + l] = t.temp[0]
@@ -114,19 +114,6 @@ def iterate_current(npts, current, I_step, savename, wait):
 
     if not (savename == None):
         numpy.savetxt(savename, (T, V, I, ti, ti_I, currents))  # save data to file
-
-    s = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-    s.login(passwords.email, passwords.password)
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = savename
-
-    f = file(savename)
-    attachment = MIMEText(f.read())
-    attachment.add_header('Content-Disposition', 'attachment', filename=savename)
-    msg.attach(attachment)
-    s.sendmail(passwords.email, passwords.emails, msg.as_string())
-
-    s.quit()
 
 
 if __name__ == "__main__":
