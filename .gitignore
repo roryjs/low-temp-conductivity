@@ -9,6 +9,5 @@
 
 .idea/workspace.xml
 
-*.txt
 passwords.py
 passwords.pyc
