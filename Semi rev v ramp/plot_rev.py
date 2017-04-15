@@ -39,8 +39,8 @@ for name in ['semi-rev-v-ramp-1-11.txt', 'semi-rev-v-ramp-11-12.txt', 'semi-rev-
 V_all = numpy.concatenate(V_all)
 I_all = numpy.concatenate(I_all)
 Is = -numpy.mean(I_all[I_all > -1e-6])
-
-print 'sat current: ' + str(Is)
+Is_err = numpy.max(-numpy.max(I_all[I_all > -1e-6]), -numpy.min(I_all[I_all > -1e-6]))
+print 'sat current: ' + str(Is) + ' \pm ' + str(Is_err)
 pyplot.plot(V_all, I_all)
 
 pyplot.show()
