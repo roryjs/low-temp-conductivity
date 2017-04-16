@@ -34,8 +34,9 @@ yy = func(xx, *popt)
 
 pyplot.plot(x, y, 'o', xx, yy)
 eg = (numpy.mean(av_V)) - popt[1] * 1.3806503e-23 * id_fac / 1.60217646e-19
+eg_err = eg * numpy.sqrt(numpy.diag(pcov))[1]/popt[1]
 print 'av V: ' + str(numpy.mean(av_V)) + ' \pm ' + str(numpy.max(numpy.max(av_V)-numpy.mean(av_V), numpy.mean(av_V) - numpy.min(av_V)))
-print 'Eg: ' + str(eg) + ' \pm ' + str(numpy.sqrt(numpy.diag(pcov))[1])
+print 'Eg: ' + str(eg) + ' \pm ' + str(eg_err)
 #a,b = popt
 #pyplot.plot(1/av_T, numpy.log(av_I))
 pyplot.xlabel('1/T')
